@@ -1,42 +1,30 @@
 const express = require("express");
-const { adminAuth } = require("./middlewares/auth");
-
+const { connectDB } = require("./config/database");
+const User = require("./models/user");
 const app = express();
 
-// app.use("/admin", adminAuth);
-
-app.use("/", (err, req, res, next) => {
-  if (err) {
-    res.status(500).send("Something went wrong....");
+app.post("/signUp", async (req, res) => {
+  const user = new User({
+    firstName: "Hanumanth",
+    LastName: "Ch",
+    emainId: "Hanu@ch.com",
+    Password: "Hanu@12345",
+  });
+  try {
+    await user.save();
+    res.send("User Saved Successfully");
+  } catch (err) {
+    res.send("Error While Saving Uder detials", err.message);
   }
 });
 
-//This rout only handle GET call to /user
-// app.get("/admin/getAllUser", (req, res) => {
-//   res.send({ Name: "Hanumanth" });
-// });
-// app.get("/admin/delete", (req, res) => {
-//   res.send("User deleted successfully");
-// });
-
-// app.post("/user", (req, res) => {
-//   console.log("Perform Data save operations");
-//   res.send("Data saved successfully");
-// });
-
-//This will match all the heep method api calls
-// app.use("/test", (req, res) => {
-//   res.send("Test path received from server");
-// });
-
-// app.use("/hello", (req, res) => {
-//   res.send("Hellow path from server");
-// });
-
-// app.use((req, res) => {
-//   res.send("Hellow from server");
-// });
-
-app.listen(3000, () => {
-  console.log("Server is successfully listening port 3000");
-});
+connectDB()
+  .then(() => {
+    console.log("Database Connection Established......");
+    app.listen(3000, () => {
+      console.log("Server is successfully listening port 3000");
+    });
+  })
+  .catch((err) => {
+    console.log("Database Connection NOT Established......");
+  });
